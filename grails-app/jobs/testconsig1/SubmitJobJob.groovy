@@ -5,13 +5,13 @@ class SubmitJobJob {
 	def retrieveSubmittedJobsService
 	 
     static triggers = {
-        simple name: 'simpleTrigger', startDelay: 10000, repeatInterval: 300000
+        simple name: 'simpleTrigger', startDelay: 10000, repeatInterval: 1000
        
     }
 
     void execute() {
-        println "Job run!"
+        println "Job started!"
         def list_jobs= retrieveSubmittedJobsService.listalljobsCorrelation()
-        println (list_jobs)
+        println ("Job Finished")
     }
 }

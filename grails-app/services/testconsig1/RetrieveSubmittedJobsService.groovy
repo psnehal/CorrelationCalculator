@@ -124,20 +124,20 @@ class RetrieveSubmittedJobsService {
             def outputfile="output.csv" 
              
              
-            String inputFile = uuid + "_" + firstSubJob.filename;
+            String inputFile = TEMP_DIRECTORY+uuid + "_" + firstSubJob.filename;
             String outputFile = uuid + "_" + firstSubJob.analysis + "_" + OUTPUT_FILE_CSV;
     
     
-            println("input file $inputfile")
-            println("rowSamples file $firstSubJob.rowsamples")
-            println("doScaling file $firstSubJob.doscaling")
-            println("exclusionList file $firstSubJob.exclusionlist")
+            println("input file $inputFile")
+            println(TEMP_DIRECTORY)
+            //println("doScaling file $firstSubJob.doscaling")
+            //println("exclusionList file $firstSubJob.exclusionlist")
             
             
                     
-			connection.assign("inputfile", inputfile);
-			connection.assign("outputdirectory", outputdirectory);
-			connection.assign("outputfile", outputfile);
+			connection.assign("inputfile", inputFile);
+			connection.assign("outputdirectory", TEMP_DIRECTORY);
+			connection.assign("outputfile", outputFile);
 			connection.assign("rowSamples", firstSubJob.rowsamples);
 			connection.assign("labeledSamples", firstSubJob.labeledsamples);
 			connection.assign("doTransform", firstSubJob.dotransform);
@@ -173,23 +173,7 @@ class RetrieveSubmittedJobsService {
 				}
              
 		    println("status is $status")
-		    
-			String outputString = "";
-			outputString= uuid+ OUTPUT_FILE_CSV			
-			String outputString2=uuid+ 'coeff_' + OUTPUT_FILE_CSV
-			String outputString3=uuid+ 'pval_'+ OUTPUT_FILE_CSV
-			String outputString4 =uuid+ 'qval_'+ OUTPUT_FILE_CSV
-			
-			println("outputString $outputString)
-			println("outputString2 $outputString2)
-			println("outputString3 $outputString3)
-			println("outputString4 $outputString4)
-			
-			
-			File file = new File(TEMP_DIRECTORY + outputString)		
-			File file2 = new File(TEMP_DIRECTORY + outputString2)
-			File file3 = new File(TEMP_DIRECTORY + outputString3)
-			File file4 = new File(TEMP_DIRECTORY + outputString4)
+
 			
 			       
            
