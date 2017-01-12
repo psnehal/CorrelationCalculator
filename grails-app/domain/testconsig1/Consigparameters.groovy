@@ -4,11 +4,16 @@ class Consigparameters {
 
      
      String filepath
+     String isgeneid    
      Integer jindex
-     Integer minCon
-     Integer maxCon
+     Integer mincon
+     Integer maxcon
      String uuid
      String status
+     
+     String databaselist
+     
+     
      
      
      

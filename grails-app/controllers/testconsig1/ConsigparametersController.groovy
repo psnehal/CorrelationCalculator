@@ -17,6 +17,8 @@ class ConsigparametersController {
     def show(Consigparameters consigparameters) {
         respond consigparameters
     }
+    
+ 
 
     def create() {
         respond new Consigparameters(params)

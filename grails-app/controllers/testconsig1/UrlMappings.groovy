@@ -9,7 +9,7 @@ class UrlMappings {
             }
         }
 
-        "/"(view:"/index")
+        "/" (controller:"fileup1", action:"consigMain")
         "500"(view:'/error')
         "404"(view:'/notFound')
     }

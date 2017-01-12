@@ -49,10 +49,28 @@ a:hover, a:active {
     outline: none; /* prevents outline in webkit on active links but retains it for tab focus */
 }
 
-h1, h2, h3 {
+h1{
+    font-weight: bold;
+   font-size: 34px;
+	color: #0F226E;
+	 padding: 1em;
+}
+
+h2{
+    font-weight: normal;
+    font-size: 20px;
+    color: #0F226E;
+    font-weight: bold;
+    margin: 0.8em 0 2.3em 2;
+     
+}
+
+ h3 {
     font-weight: normal;
     font-size: 1.25em;
-    margin: 0.8em 0 0.3em 0;
+    color: #0F226E;
+    font-weight: bold;
+    margin: 0.8em 0 1.3em 0;
 }
 
 ul {
@@ -76,7 +94,7 @@ img {
 .content h1 {
     border-bottom: 1px solid #CCCCCC;
     margin: 0.8em 1em 0.3em;
-    padding: 0 0.25em;
+    padding: 0 1.25em;
 }
 
 .scaffold-list h1 {
@@ -84,7 +102,7 @@ img {
 }
 
 .footer {
-    background: #48802c;
+    background: grey;
     color: #000;
     clear: both;
     font-size: 0.8em;
@@ -112,6 +130,11 @@ img {
 
 .nav {
     zoom: 1;
+    background-color: #efefef;
+	padding: 0.5em 0.75em;
+	   -moz-box-shadow: 0 0 3px 1px #aaaaaa;
+	-webkit-box-shadow: 0 0 3px 1px #aaaaaa;
+	        box-shadow: 0 0 3px 1px #aaaaaa;
 }
 
 .nav ul {
@@ -168,6 +191,13 @@ img {
 .nav a.list {
     background-image: url(../images/skin/database_table.png);
 }
+
+.nav a.intro, .nav a.list, .nav a.create {
+	background-position: 0.7em center;
+	background-repeat: no-repeat;
+	text-indent: 25px;
+}
+
 
 .nav a.create {
     background-image: url(../images/skin/database_add.png);
@@ -227,8 +257,10 @@ input, select, textarea {
     padding: 0.2em 0.4em;
 }
 
+
 select {
     padding: 0.2em 0.2em 0.2em 0;
+     width:450px; 
 }
 
 select[multiple] {
@@ -240,12 +272,21 @@ textarea {
     height: 150px;
     overflow: auto; /* IE always renders vertical scrollbar without this */
     vertical-align: top;
+     
 }
 
 input[type=checkbox], input[type=radio] {
     background-color: transparent;
     border: 0;
     padding: 0;
+    margin-right: 2px;
+}
+
+input[type=number] {
+    background-color: transparent;
+    border: 1px solid #cccccc;
+    padding: 0;
+    margin-left: 12px;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -255,6 +296,15 @@ input:focus, select:focus, textarea:focus {
     -moz-box-shadow: 0 0 0.5em #ffffff;
     -webkit-box-shadow: 0 0 0.5em #ffffff;
     box-shadow: 0 0 0.5em #ffffff;
+}
+
+#inpFor{
+	
+	margin-bottom: 10px;
+	 padding-top: 5px;
+    padding-right: 20px;
+    padding-bottom: 5px;
+    padding-left: 50px;
 }
 
 .required-indicator {
@@ -446,7 +496,7 @@ th.desc a {
 }
 
 th:hover, tr:hover {
-    background: #79b94c;
+    background: white;
 }
 
 /* PAGINATION */

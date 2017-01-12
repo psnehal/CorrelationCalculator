@@ -11,8 +11,8 @@ dataSource:
     jmxExport: true
     dialect: org.hibernate.dialect.MySQLInnoDBDialect
     driverClassName: com.mysql.jdbc.Driver
-    username: snehal
-    password: snehal
+    username: consig
+    password: consig
 
 environments:
     development:
@@ -131,8 +131,8 @@ quartz:
         scheduler.idleWaitTime: 1000
 
         threadPool.'class': 'org.quartz.simpl.SimpleThreadPool'
-        threadPool.threadCount: 2
-        threadPool.threadPriority: 2
+        threadPool.threadCount: 1
+        threadPool.threadPriority: 1
 
         jobStore.misfireThreshold: 60000
 

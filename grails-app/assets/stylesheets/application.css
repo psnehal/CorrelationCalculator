@@ -13,3 +13,18 @@
 *= require mobile
 *= require_self
 */
+
+
+#masthead {
+	width: 100%;
+	height: 100%;	
+	overflow: right;
+	align:right;
+	text-align: left;
+	background-color: #FFFFFF;
+    background-image:url('../images/Banner.jpg') ;   
+    background-size: cover;
+    height : 150px;
+    background-position: center center;
+    
+}

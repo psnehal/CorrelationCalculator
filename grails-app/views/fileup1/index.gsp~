@@ -19,6 +19,8 @@
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
             <f:table collection="${fileup1List}" />
+            
+            
 
             <div class="pagination">
                 <g:paginate total="${fileup1Count ?: 0}" />

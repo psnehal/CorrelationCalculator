@@ -27,7 +27,9 @@ class RetrieveSubmittedJobsService {
 	private static final String PCOR_COMPARE_SCRIPT = "lipids/lipid_s0_input.R";
 	private static final String R_DIRECTORY= "/home/snehal/ConSig/TestGrails/testconsig1/grails-app/services/testconsig1/"
 	private static final String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir") + File.separatorChar;
-	
+	private static final String CONSIG_DIRECTORY="/home/snehal/ConSig/PelleScripts/newTestDir/"
+	private static final String CONSIG_SCRIPT = "ConSig.R"
+	private static final String CONSIG_RESULT = "/usr/share/ConSig/StoreFile"
 	
 	def serviceMethod() {
 
@@ -39,40 +41,122 @@ class RetrieveSubmittedJobsService {
         def qjobs = Consigparameters.createCriteria()
         def result= qjobs.list {
 			eq("status","queued")
-		}
-        result.each { person ->
-					    println "filepath = ${person.filepath}"
-					    println "jiindex = ${person.jindex}"
-					    println "uuid = ${person.requestId}"					   
-					    println "min_con = ${person.minCon}"
-					}
-        
-        def rjobs= Consigparameters.executeQuery("select requestId from Consigparameters where status ='running'")        
+		}        
+        def rjobs= Consigparameters.executeQuery("select uuid from Consigparameters where status ='running'")        
         println("below query with queued jobs $result.size() running jobs $rjobs.size")
         def rjobCount = rjobs.size()
         println("1")
-        if (rjobCount<2)
+        if (rjobCount<2 && result.size != 0)
         {
-          def firstSubJob = result[0]
-          println("1")
-          println ("firstSubJob  $firstSubJob.requestId")
-          def uuid= firstSubJob.uuid
-          println("2")
-          RConnection connection;
-		  connection = new RConnection("localhost", 6311);	
-		  println("3")		
-		  println("Connected to R")
-		  Consigparameters.executeUpdate("update Consigparameters b set b.status=:status " +
-                      "where b.requestId=:requestId",
-                      [status: 'running', uuid: uuid])
-		  connection.voidEval("library('gplots')");
-		  Consigparameters.executeUpdate("update Consigparameters b set b.status=:status " +
+        
+            println(result)
+	        def firstSubJob = result[0]	     
+	        def status= firstSubJob.status
+	        println("Status of current job is "+ status)    
+	        println("1")	            	          
+	        def filepath= firstSubJob.filepath
+		    def jindex= firstSubJob.jindex
+		    def mincon= firstSubJob.mincon
+		    def maxcon= firstSubJob.maxcon
+		    def uuid= firstSubJob.uuid
+		    
+		    //def conceptlist= firstSubJob.conceptlist
+		    def databaselist= firstSubJob.databaselist
+		    //def dbflag = firstSubJob.dbflag
+		    def geneid=firstSubJob.isgeneid
+		    String filOutputFile = CONSIG_RESULT+uuid + "_" + 'filOutputFile';
+            String outputFile = CONSIG_RESULT+uuid + "_" + 'consig_output';
+            println("CONSIG_RESULT $CONSIG_RESULT")
+            def gene2symfile='/home/snehal/ConSig/smallTestDir/entrez2sym'
+			def annotation_file='/home/snehal/ConSig/smallTestDir/smallGO2EG.RData'
+			def matrix_file='/home/snehal/ConSig/smallTestDir/smallIntMatrix.RData'
+			Consigparameters.executeUpdate("update Consigparameters b set b.status=:status " +
                       "where b.uuid=:uuid",
-                      [status: 'done', uuid: uuid])
-                      
-                      
-		  println("4")		  
-		  println("done with the Rserve")
+                      [status: 'running', uuid: uuid])
+			
+							
+							if (geneid.equals("geneId"))
+							{
+							print("its geneid loop")
+							
+							}
+							else
+							{
+							println("its genesymbol loop")
+							def ensym =Entrez2sym.getAll()			
+						     def mapidtosym= ensym.collect{ en -> return[enId:en.enId, sym:en.sym]}
+								//println(mapidtosym.enId);
+								//def item2 = mapidtosym.findAll { p -> p.sym == 'ABG' } 
+								//println("*****************************************************"+item2.enId)
+								def filepath2 ='/home/snehal/ConSig/StoreFile/'+uuid+'_Sym.txt'
+								 File file = new File(filepath2)
+									new File(filepath).eachLine 
+									{ line ->								  
+									   String [] tokens = line.split("\t")
+									   println("tokens are")	
+									   println(tokens)						
+											 def symbol = tokens[2]
+											 def item = mapidtosym.findAll { p -> p.sym == symbol }							
+											 
+											 println("item"+ item+"  "+ symbol)							 
+										     item.each {
+												       String line2 = "Curate"+"\t"+"AllCancerGene"+"\t"+"${it.enId}\n"
+												       file << (line2)
+												       println("from the createfile inserterd into the file")
+														}
+									}
+						     }
+						   println("2")
+				           RConnection connection;
+						   connection = new RConnection("localhost", 6311);							  
+						   println("Connected to R for uuid $uuid")	
+					       connection.assign("geneListFile", filepath);
+						   connection.assign("ji.threshold", jindex);
+						   connection.assign("size.min", mincon);
+						   connection.assign("size.max", maxcon);
+						   connection.assign("filter.strings", 'NA');
+						   connection.assign("use.databases", databaselist);
+						   connection.assign("filtered.file", filOutputFile);
+						   connection.assign("output.file", outputFile);
+						   connection.assign("entrez2sym.file", gene2symfile);
+						   connection.assign("DB.data.file", annotation_file);
+						   connection.assign("intMatrix.file", matrix_file);
+						   println("3")		
+						  //ConSig.R CancerGene_CGC20150525.shuf.1.db smallGO2EG.RData matrix_file entrez2sym 1 5 1500 NA NA filtered.file output
+						  try
+								{
+								   println("above script")
+								    REXP r1=  connection.parseAndEval("try("+"source('" + CONSIG_DIRECTORY + CONSIG_SCRIPT + "')"+",silent=TRUE)");
+									println("below script")
+									if (r1.inherits("try-error")) 
+									{
+										System.err.println("Error: "+r1.asString());
+										status = "Error: "+r1.asString();
+										}
+									else { 
+									     System.out.println("Hello");
+										 status = "Done";
+										}
+									
+								}
+								catch (RserveException e)
+								{
+									e.printStackTrace();
+									throw new IllegalStateException("Unable to run command  parseAndEval on RServer: " + command);
+								}
+				             
+						    println("status is $status")
+						  
+						  
+						  
+						  connection.voidEval("library('gplots')");
+						  Consigparameters.executeUpdate("update Consigparameters b set b.status=:status " +
+				                      "where b.uuid=:uuid",
+				                      [status: 'done', uuid: uuid])
+				                      
+				                      
+						  println("4")		  
+						  println("done with the Rserve")
           
 			     
           
@@ -167,14 +251,13 @@ class RetrieveSubmittedJobsService {
 					
 				}
 				catch (RserveException e)
+				
 				{
 					e.printStackTrace();
 					throw new IllegalStateException("Unable to run command  parseAndEval on RServer: " + command);
 				}
              
-		    println("status is $status")
-
-			
+		    println("status is $status")	
 			       
            
            //Job is done and update status as done..           
